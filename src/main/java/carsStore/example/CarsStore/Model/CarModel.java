@@ -1,8 +1,7 @@
 package carsStore.example.CarsStore.Model;
 
-import carsStore.example.CarsStore.Condition;
+import carsStore.example.CarsStore.Enums.Condition;
 import jakarta.persistence.*;
-import lombok.Data;
 
 @Entity
 @Table(name = "tb_CarRegisters")

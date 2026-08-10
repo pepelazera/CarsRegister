@@ -1,30 +1,25 @@
 package carsStore.example.CarsStore.Controller;
 
 import carsStore.example.CarsStore.Model.CarModel;
-import carsStore.example.CarsStore.Repository.CarRepository;
 import carsStore.example.CarsStore.Service.CarService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/cars")
 public class CarController {
 
-    CarRepository carRepository;
-
-    public CarController(CarRepository carRepository) {
-        this.carRepository = carRepository;
-    }
+    CarService carService;
 
     // GET
     @GetMapping("/list")
     public CarModel CarsList(@RequestBody CarModel carModel) {
-        return (CarModel) carRepository.findAll();
+        return null;
     }
 
     @GetMapping("/list/{id}")
-    public CarModel CarsListId(@PathVariable Long id) {
-        return null;
+    public void CarsListId(@PathVariable Long id) {
     }
 
     // POST

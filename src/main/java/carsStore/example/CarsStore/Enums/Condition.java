@@ -1,4 +1,4 @@
-package carsStore.example.CarsStore;
+package carsStore.example.CarsStore.Enums;
 
 public enum Condition {
 
