@@ -4,28 +4,33 @@ import carsStore.example.CarsStore.Model.CarModel;
 import carsStore.example.CarsStore.Service.CarService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/cars")
 public class CarController {
 
-    CarService carService;
+    private final CarService carService;
+
+    public CarController(CarService carService) {
+        this.carService = carService;
+    }
 
     // GET
     @GetMapping("/list")
-    public CarModel CarsList(@RequestBody CarModel carModel) {
-        return null;
+    public List<CarModel> CarsList() {
+        return carService.listCars();
     }
 
     @GetMapping("/list/{id}")
-    public void CarsListId(@PathVariable Long id) {
+    public List<CarModel> CarsListId(@PathVariable Long id) {
+        return carService.listCarsById(id);
     }
 
     // POST
     @PostMapping("/register")
     public CarModel CarsRegister(@RequestBody CarModel carModel) {
-        return null;
+        return carService.createCar(carModel);
     }
 
     // UPDATE
@@ -40,6 +45,8 @@ public class CarController {
     }
 
     // DELETE
+    @DeleteMapping("/delete/{id}")
     public void DeleteCarById(@PathVariable Long id) {
+        carService.deleteCarsById(id);
     }
 }

@@ -4,12 +4,12 @@ import carsStore.example.CarsStore.Enums.Condition;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "tb_CarRegisters")
+@Table(name = "tb_cars")
 public class CarModel {
 
-    public CarModel(Long id, String carName, String model, Integer year, Condition condition) {
+    public CarModel(Long id, String name, String model, Integer year, Condition condition) {
         this.id = id;
-        CarName = carName;
+        CarName = name;
         this.model = model;
         this.year = year;
         this.condition = condition;
@@ -28,7 +28,7 @@ public class CarModel {
     @Column(name = "model")
     private String model;
 
-    @Column(name = "year")
+    @Column(name = "car_year")
     private Integer year;
 
     @Column(name = "Condition")
