@@ -9,7 +9,7 @@ public class CarModel {
 
     public CarModel(Long id, String name, String model, Integer year, Condition condition) {
         this.id = id;
-        CarName = name;
+        carName = name;
         this.model = model;
         this.year = year;
         this.condition = condition;
@@ -23,7 +23,7 @@ public class CarModel {
     private Long id;
 
     @Column(name = "name")
-    private String CarName;
+    private String carName;
 
     @Column(name = "model")
     private String model;
@@ -43,11 +43,11 @@ public class CarModel {
     }
 
     public String getCarName() {
-        return CarName;
+        return carName;
     }
 
     public void setCarName(String carName) {
-        CarName = carName;
+        this.carName = carName;
     }
 
     public String getModel() {
