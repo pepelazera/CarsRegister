@@ -4,9 +4,7 @@ import carsStore.example.CarsStore.DTO.CarDTO;
 import carsStore.example.CarsStore.Model.CarModel;
 import carsStore.example.CarsStore.Service.CarService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/cars")
@@ -20,12 +18,12 @@ public class CarController {
 
     // GET
     @GetMapping("/list")
-    public List<CarModel> CarsList(@RequestBody CarModel carModel) {
-        return carService.listCars(carModel);
+    public List<CarDTO> CarsList() {
+        return carService.listCars();
     }
 
     @GetMapping("/list/{id}")
-    public List<CarModel> CarsListId(@PathVariable Long id) {
+    public CarDTO CarsListId(@PathVariable Long id) {
         return carService.listCarsById(id);
     }
 
@@ -37,7 +35,7 @@ public class CarController {
 
     // UPDATE
     @PutMapping("/update/{id}")
-    public CarModel CarsUpdate(@PathVariable Long id, @RequestBody CarModel carModelUpdated) {
+    public CarDTO CarsUpdate(@PathVariable Long id, @RequestBody CarDTO carModelUpdated) {
         return carService.updateCarById(id, carModelUpdated);
     }
 

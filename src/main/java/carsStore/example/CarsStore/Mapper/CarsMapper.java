@@ -25,9 +25,9 @@ public class CarsMapper {
 
         carDTO.setId(carModel.getId());
         carDTO.setCarName(carModel.getCarName());
-        carDTO.setModel(carDTO.getModel());
-        carDTO.setYear(carDTO.getYear());
-        carDTO.setCondition(carDTO.getCondition());
+        carDTO.setModel(carModel.getModel());
+        carDTO.setYear(carModel.getYear());
+        carDTO.setCondition(carModel.getCondition());
 
         return carDTO;
     }

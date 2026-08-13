@@ -7,9 +7,9 @@ import jakarta.persistence.*;
 @Table(name = "tb_cars")
 public class CarModel {
 
-    public CarModel(Long id, String name, String model, Integer year, Condition condition) {
+    public CarModel(Long id, String carName, String model, Integer year, Condition condition) {
         this.id = id;
-        carName = name;
+        this.carName = carName;
         this.model = model;
         this.year = year;
         this.condition = condition;
