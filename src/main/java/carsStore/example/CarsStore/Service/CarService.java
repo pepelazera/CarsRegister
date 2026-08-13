@@ -7,7 +7,6 @@ import carsStore.example.CarsStore.Model.CarModel;
 import carsStore.example.CarsStore.Repository.CarRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,6 +52,27 @@ public class CarService {
             return carsMapper.map(carsSaved); // and here, will be returned the mapper of carsSaved
         }
         return null; // If the user put an id that not exist, the application will be return null
+    }
+
+    public void patchCar(Long id, CarDTO carDTO) {
+        CarModel cars = carRepository.findById(id) // Receive me like an Optional<CarModel>
+                .orElseThrow(() -> new RuntimeException("The car hasn't been found"));
+                // This part say: "If you have car inside, send me; if not, put this error message
+
+        if (carDTO.getCarName() != null) {
+            cars.setCarName(carDTO.getCarName());
+        }
+        if (carDTO.getModel() != null) {
+            cars.setModel(carDTO.getModel());
+        }
+        if (carDTO.getYear() != null) {
+            cars.setYear(carDTO.getYear());
+        }
+        if (carDTO.getCondition() != null) {
+            cars.setCondition(carDTO.getCondition());
+        }
+
+        carRepository.save(cars);
     }
 
     // DELETE with id
