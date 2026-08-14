@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="'Edit — ' + ${car.carName}">Edit car</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+    <style>
+        /* ==================================================================
+           CarsStore — edit car
+           ================================================================== */
+
+        :root {
+            --ink:        #12201B;
+            --ink-soft:   #4A5D56;
+            --paper:      #E9EEEA;
+            --surface:    #FFFFFF;
+            --surface-2:  #F5F8F6;
+            --line:       #D6DFDA;
+            --green:      #1F5D48;
+            --green-dark: #164636;
+            --green-soft: #E6F1EB;
+            --plate:      #1B3A93;
+            --brake:      #B3261E;
+
+            --radius: 12px;
+            --shadow: 0 1px 2px rgba(18, 32, 27, .05), 0 14px 30px -18px rgba(18, 32, 27, .35);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 40px 24px 72px;
+            background:
+                    radial-gradient(120% 60% at 50% 0%, #FFFFFF 0%, var(--paper) 60%) no-repeat,
+                    var(--paper);
+            color: var(--ink);
+            font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+            font-size: 15px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page { max-width: 680px; margin: 0 auto; }
+
+        /* --------------------------------------------------------- buttons --- */
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 16px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--ink);
+            font: inherit;
+            font-size: 13.5px;
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background-color .15s ease, border-color .15s ease,
+            color .15s ease, transform .15s ease;
+        }
+
+        .btn:hover { background: var(--surface-2); border-color: #BFCCC5; }
+        .btn:active { transform: translateY(1px); }
+        .btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+
+        .btn--primary {
+            background: var(--green);
+            border-color: var(--green);
+            color: #FFFFFF;
+            box-shadow: 0 6px 16px -8px rgba(31, 93, 72, .8);
+        }
+
+        .btn--primary:hover {
+            background: var(--green-dark);
+            border-color: var(--green-dark);
+            transform: translateY(-1px);
+        }
+
+        /* ------------------------------------------------------------ back --- */
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 20px;
+            color: var(--ink-soft);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            text-decoration: none;
+        }
+
+        .back:hover { color: var(--green-dark); }
+        .back::before { content: "←"; font-size: 14px; }
+
+        /* ------------------------------------------------------------ card --- */
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding: 26px 30px 22px;
+            border-bottom: 1px solid var(--line);
+            background: linear-gradient(180deg, #FFFFFF 0%, var(--surface-2) 100%);
+        }
+
+        .eyebrow {
+            margin: 0 0 6px;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--green);
+        }
+
+        .card-head h1 {
+            margin: 0;
+            font-family: "Bricolage Grotesque", "IBM Plex Sans", sans-serif;
+            font-weight: 800;
+            font-size: clamp(24px, 4.5vw, 32px);
+            letter-spacing: -.02em;
+            line-height: 1.1;
+        }
+
+        .plate {
+            display: inline-flex;
+            align-items: center;
+            overflow: hidden;
+            border: 2px solid var(--ink);
+            border-radius: 6px;
+            background: #FFFFFF;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: .06em;
+        }
+
+        .plate::before {
+            content: "";
+            align-self: stretch;
+            width: 7px;
+            background: var(--plate);
+        }
+
+        .plate span { padding: 4px 11px; }
+
+        /* ------------------------------------------------------------ form --- */
+
+        .form-body { padding: 26px 30px 6px; }
+
+        .field { margin-bottom: 22px; }
+
+        .field label {
+            display: block;
+            margin-bottom: 7px;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+        }
+
+        .control {
+            display: block;
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--ink);
+            font: inherit;
+            font-size: 15px;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+
+        .control:hover { border-color: #BFCCC5; }
+
+        .control:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px var(--green-soft);
+        }
+
+        .control.num {
+            font-family: "IBM Plex Mono", monospace;
+            font-variant-numeric: tabular-nums;
+            max-width: 180px;
+        }
+
+        select.control {
+            appearance: none;
+            padding-right: 40px;
+            background-image:
+                    linear-gradient(45deg, transparent 50%, var(--ink-soft) 50%),
+                    linear-gradient(135deg, var(--ink-soft) 50%, transparent 50%);
+            background-position: right 18px center, right 13px center;
+            background-size: 5px 5px, 5px 5px;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
+
+        .hint {
+            margin: 7px 0 0;
+            font-size: 13px;
+            color: var(--ink-soft);
+        }
+
+        .error {
+            margin: 7px 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--brake);
+        }
+
+        .control.is-invalid {
+            border-color: var(--brake);
+            box-shadow: 0 0 0 3px #FBEAE9;
+        }
+
+        /* ---------------------------------------------------------- footer --- */
+
+        .card-foot {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            padding: 18px 30px;
+            border-top: 1px solid var(--line);
+            background: var(--surface-2);
+        }
+
+        @media (max-width: 560px) {
+            body { padding: 28px 14px 56px; }
+            .card-head, .form-body, .card-foot { padding-left: 20px; padding-right: 20px; }
+            .card-foot { justify-content: stretch; }
+            .card-foot .btn { flex: 1; }
+            .control.num { max-width: none; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+
+    <a class="back" th:href="@{/cars/ui/list/{id}(id=${car.id})}">Back to car</a>
+
+    <div class="card">
+
+        <form th:action="@{/cars/ui/edit/{id}(id=${car.id})}"
+              th:object="${car}" method="post">
+
+            <header class="card-head">
+                <div>
+                    <p class="eyebrow">Editing record</p>
+                    <h1 th:text="${car.carName}">Car name</h1>
+                </div>
+
+                <span class="plate"><span th:text="${car.id}">01</span></span>
+            </header>
+
+            <div class="form-body">
+
+                <div class="field">
+                    <label for="carName">Car name</label>
+                    <input type="text" id="carName" class="control"
+                           th:field="*{carName}"
+                           th:classappend="${#fields.hasErrors('carName')} ? 'is-invalid'"
+                           placeholder="Volkswagen Gol">
+                    <p class="error" th:if="${#fields.hasErrors('carName')}"
+                       th:errors="*{carName}">Error</p>
+                </div>
+
+                <div class="field">
+                    <label for="model">Model</label>
+                    <input type="text" id="model" class="control"
+                           th:field="*{model}"
+                           th:classappend="${#fields.hasErrors('model')} ? 'is-invalid'"
+                           placeholder="1.6 MSI Trendline">
+                    <p class="hint">Version or trim, as it appears on the vehicle document.</p>
+                    <p class="error" th:if="${#fields.hasErrors('model')}"
+                       th:errors="*{model}">Error</p>
+                </div>
+
+                <div class="field">
+                    <label for="year">Year</label>
+                    <input type="number" id="year" class="control num"
+                           th:field="*{year}"
+                           th:classappend="${#fields.hasErrors('year')} ? 'is-invalid'"
+                           min="1900" max="2100" step="1" placeholder="2024">
+                    <p class="error" th:if="${#fields.hasErrors('year')}"
+                       th:errors="*{year}">Error</p>
+                </div>
+
+                <div class="field">
+                    <label for="condition">Condition</label>
+                    <select id="condition" class="control" th:field="*{condition}">
+                        <option th:each="c : ${conditions}"
+                                th:value="${c}"
+                                th:text="${c}">NEW</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <footer class="card-foot">
+                <a class="btn" th:href="@{/cars/ui/list/{id}(id=${car.id})}">Cancel</a>
+                <button type="submit" class="btn btn--primary">Save changes</button>
+            </footer>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>

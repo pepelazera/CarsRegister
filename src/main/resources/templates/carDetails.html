@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="'Car — ' + ${cars.carName}">Car details</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+    <style>
+        /* ==================================================================
+           CarsStore — car details
+           ================================================================== */
+
+        :root {
+            --ink:        #12201B;
+            --ink-soft:   #4A5D56;
+            --paper:      #E9EEEA;
+            --surface:    #FFFFFF;
+            --surface-2:  #F5F8F6;
+            --line:       #D6DFDA;
+            --green:      #1F5D48;
+            --green-dark: #164636;
+            --green-soft: #E6F1EB;
+            --plate:      #1B3A93;
+            --brake:      #B3261E;
+            --amber:      #99610F;
+
+            --radius: 12px;
+            --shadow: 0 1px 2px rgba(18, 32, 27, .05), 0 14px 30px -18px rgba(18, 32, 27, .35);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 40px 24px 72px;
+            background:
+                    radial-gradient(120% 60% at 50% 0%, #FFFFFF 0%, var(--paper) 60%) no-repeat,
+                    var(--paper);
+            color: var(--ink);
+            font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+            font-size: 15px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page { max-width: 760px; margin: 0 auto; }
+
+        /* --------------------------------------------------------- buttons --- */
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 16px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--ink);
+            font: inherit;
+            font-size: 13.5px;
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background-color .15s ease, border-color .15s ease,
+            color .15s ease, transform .15s ease;
+        }
+
+        .btn:hover { background: var(--surface-2); border-color: #BFCCC5; }
+        .btn:active { transform: translateY(1px); }
+        .btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+
+        .btn--primary {
+            background: var(--green);
+            border-color: var(--green);
+            color: #FFFFFF;
+            box-shadow: 0 6px 16px -8px rgba(31, 93, 72, .8);
+        }
+
+        .btn--primary:hover {
+            background: var(--green-dark);
+            border-color: var(--green-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn--danger { color: var(--brake); }
+
+        .btn--danger:hover {
+            background: var(--brake);
+            border-color: var(--brake);
+            color: #FFFFFF;
+        }
+
+        /* ------------------------------------------------------------ back --- */
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 20px;
+            color: var(--ink-soft);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            text-decoration: none;
+        }
+
+        .back:hover { color: var(--green-dark); }
+        .back::before { content: "←"; font-size: 14px; }
+
+        /* ------------------------------------------------------------ card --- */
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 28px 30px 24px;
+            border-bottom: 1px solid var(--line);
+            background: linear-gradient(180deg, #FFFFFF 0%, var(--surface-2) 100%);
+        }
+
+        .card-head h1 {
+            font-family: "Bricolage Grotesque", "IBM Plex Sans", sans-serif;
+            font-weight: 800;
+            font-size: clamp(26px, 4.5vw, 36px);
+            letter-spacing: -.02em;
+            line-height: 1.1;
+            margin: 12px 0 4px;
+        }
+
+        .card-head .subtitle {
+            margin: 0;
+            color: var(--ink-soft);
+            font-size: 15px;
+        }
+
+        /* ------------------------------------ signature: the license plate --- */
+
+        .plate {
+            display: inline-flex;
+            align-items: center;
+            overflow: hidden;
+            border: 2px solid var(--ink);
+            border-radius: 7px;
+            background: #FFFFFF;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: .06em;
+        }
+
+        .plate::before {
+            content: "";
+            align-self: stretch;
+            width: 9px;
+            background: var(--plate);
+        }
+
+        .plate span { padding: 5px 14px; }
+
+        /* ------------------------------------------------------ spec sheet --- */
+
+        .specs { margin: 0; padding: 6px 30px 24px; }
+
+        .spec {
+            display: flex;
+            align-items: baseline;
+            gap: 18px;
+            padding: 16px 0;
+            border-bottom: 1px dashed #DDE5E0;
+        }
+
+        .spec:last-child { border-bottom: none; }
+
+        .spec dt {
+            flex: 0 0 150px;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+        }
+
+        .spec dd {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .spec dd.num {
+            font-family: "IBM Plex Mono", monospace;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* -------------------------------------------------- condition badge --- */
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 3px 11px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: var(--surface-2);
+            color: var(--ink-soft);
+            font-size: 12.5px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .badge::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .badge.new {
+            background: var(--green-soft);
+            border-color: #C3DED0;
+            color: var(--green);
+        }
+
+        .badge.pre_owned {
+            background: #E8EFF9;
+            border-color: #C6D6EE;
+            color: var(--plate);
+        }
+
+        .badge.used {
+            background: #FAF2E4;
+            border-color: #EBDCBB;
+            color: var(--amber);
+        }
+
+        /* ---------------------------------------------------------- footer --- */
+
+        .card-foot {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            padding: 18px 30px;
+            border-top: 1px solid var(--line);
+            background: var(--surface-2);
+        }
+
+        @media (max-width: 560px) {
+            body { padding: 28px 14px 56px; }
+            .card-head, .specs, .card-foot { padding-left: 20px; padding-right: 20px; }
+            .spec { flex-direction: column; gap: 4px; }
+            .spec dt { flex: none; }
+            .card-foot { justify-content: stretch; }
+            .card-foot .btn { flex: 1; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+
+    <a class="back" th:href="@{/cars/ui/list}">Back to inventory</a>
+
+    <article class="card">
+
+        <header class="card-head">
+            <div>
+                <span class="plate"><span th:text="${cars.id}">01</span></span>
+                <h1 th:text="${cars.carName}">Car name</h1>
+                <p class="subtitle" th:text="${cars.model}">Model</p>
+            </div>
+
+            <span class="badge"
+                  th:classappend="${#strings.toLowerCase(cars.condition)}"
+                  th:text="${cars.condition}">Condition</span>
+        </header>
+
+        <dl class="specs">
+            <div class="spec">
+                <dt>Record id</dt>
+                <dd class="num" th:text="${cars.id}">1</dd>
+            </div>
+
+            <div class="spec">
+                <dt>Car name</dt>
+                <dd th:text="${cars.carName}">Car name</dd>
+            </div>
+
+            <div class="spec">
+                <dt>Model</dt>
+                <dd th:text="${cars.model}">Model</dd>
+            </div>
+
+            <div class="spec">
+                <dt>Year</dt>
+                <dd class="num" th:text="${cars.year}">2024</dd>
+            </div>
+
+            <div class="spec">
+                <dt>Condition</dt>
+                <dd th:text="${cars.condition}">NEW</dd>
+            </div>
+        </dl>
+
+        <footer class="card-foot">
+            <a class="btn" th:href="@{/cars/ui/list}">Back</a>
+
+            <a class="btn btn--danger"
+               th:href="@{/cars/ui/delete/{id}(id=${cars.id})}"
+               onclick="return confirm('Delete this car? This cannot be undone.');">Delete</a>
+
+            <a class="btn btn--primary"
+               th:href="@{/cars/ui/edit/{id}(id=${cars.id})}">Edit car</a>
+        </footer>
+
+    </article>
+
+</div>
+
+</body>
+</html>

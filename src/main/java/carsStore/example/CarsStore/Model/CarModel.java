@@ -2,9 +2,11 @@ package carsStore.example.CarsStore.Model;
 
 import carsStore.example.CarsStore.Enums.Condition;
 import jakarta.persistence.*;
+import lombok.ToString;
 
 @Entity
 @Table(name = "tb_cars")
+@ToString
 public class CarModel {
 
     public CarModel(Long id, String carName, String model, Integer year, Condition condition) {
@@ -31,7 +33,7 @@ public class CarModel {
     @Column(name = "car_year")
     private Integer year;
 
-    @Column(name = "Condition")
+    @Column(name = "condition")
     private Condition condition;
 
     public Long getId() {

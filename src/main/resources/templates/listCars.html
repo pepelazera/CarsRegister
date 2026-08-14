@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cars — Inventory</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+    <style>
+        /* ==================================================================
+           CarsStore — inventory table
+           Paleta: pine ink · vapor paper · bottle green · plate blue · brake red
+           ================================================================== */
+
+        :root {
+            --ink:        #12201B;
+            --ink-soft:   #4A5D56;
+            --paper:      #E9EEEA;
+            --surface:    #FFFFFF;
+            --surface-2:  #F5F8F6;
+            --line:       #D6DFDA;
+            --green:      #1F5D48;
+            --green-dark: #164636;
+            --green-soft: #E6F1EB;
+            --plate:      #1B3A93;
+            --brake:      #B3261E;
+            --amber:      #99610F;
+
+            --radius: 12px;
+            --shadow: 0 1px 2px rgba(18, 32, 27, .05), 0 14px 30px -18px rgba(18, 32, 27, .35);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 40px 24px 72px;
+            background:
+                    radial-gradient(120% 60% at 50% 0%, #FFFFFF 0%, var(--paper) 60%) no-repeat,
+                    var(--paper);
+            color: var(--ink);
+            font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+            font-size: 15px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ----------------------------------------------------- page header --- */
+
+        .page { max-width: 1040px; margin: 0 auto; }
+
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .eyebrow {
+            font-family: "IBM Plex Mono", ui-monospace, monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin: 0 0 6px;
+        }
+
+        h1 {
+            font-family: "Bricolage Grotesque", "IBM Plex Sans", sans-serif;
+            font-weight: 800;
+            font-size: clamp(30px, 5vw, 42px);
+            letter-spacing: -.02em;
+            line-height: 1.05;
+            margin: 0;
+        }
+
+        .count {
+            display: inline-block;
+            margin-top: 8px;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12.5px;
+            color: var(--ink-soft);
+        }
+
+        /* --------------------------------------------------------- buttons --- */
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 16px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--ink);
+            font: inherit;
+            font-size: 13.5px;
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background-color .15s ease, border-color .15s ease,
+            color .15s ease, transform .15s ease, box-shadow .15s ease;
+        }
+
+        .btn:hover {
+            background: var(--surface-2);
+            border-color: #BFCCC5;
+        }
+
+        .btn:active { transform: translateY(1px); }
+
+        .btn:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 2px;
+        }
+
+        .btn--primary {
+            background: var(--green);
+            border-color: var(--green);
+            color: #FFFFFF;
+            box-shadow: 0 6px 16px -8px rgba(31, 93, 72, .8);
+        }
+
+        .btn--primary:hover {
+            background: var(--green-dark);
+            border-color: var(--green-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn--sm { padding: 6px 12px; font-size: 12.5px; }
+
+        .btn--quiet {
+            background: transparent;
+            border-color: transparent;
+            color: var(--ink-soft);
+        }
+
+        .btn--quiet:hover {
+            background: var(--green-soft);
+            border-color: transparent;
+            color: var(--green-dark);
+        }
+
+        .btn--danger {
+            background: transparent;
+            border-color: transparent;
+            color: var(--brake);
+        }
+
+        .btn--danger:hover {
+            background: var(--brake);
+            border-color: var(--brake);
+            color: #FFFFFF;
+        }
+
+        /* ----------------------------------------------------------- table --- */
+
+        .table-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .table-scroll { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            min-width: 760px;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            padding: 13px 18px;
+            background: var(--surface-2);
+            border-bottom: 1px solid var(--line);
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #EAF0EC;
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td { border-bottom: none; }
+
+        tbody tr { transition: background-color .12s ease; }
+
+        tbody tr:hover { background: #F7FAF8; }
+
+        .col-name { font-weight: 600; letter-spacing: -.01em; }
+
+        .col-model { color: var(--ink-soft); }
+
+        .num {
+            font-family: "IBM Plex Mono", monospace;
+            font-variant-numeric: tabular-nums;
+            font-size: 13.5px;
+        }
+
+        .col-actions { text-align: right; }
+
+        .actions {
+            display: inline-flex;
+            gap: 4px;
+            justify-content: flex-end;
+            flex-wrap: nowrap;
+        }
+
+        /* ------------------------------- signature: id as license plate --- */
+
+        .plate {
+            display: inline-flex;
+            align-items: center;
+            overflow: hidden;
+            min-width: 62px;
+            border: 1.5px solid var(--ink);
+            border-radius: 5px;
+            background: #FFFFFF;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .04em;
+        }
+
+        .plate::before {
+            content: "";
+            align-self: stretch;
+            width: 6px;
+            background: var(--plate);
+        }
+
+        .plate span { padding: 2px 9px 2px 8px; }
+
+        /* ------------------------------------------------ condition badges --- */
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 3px 11px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: var(--surface-2);
+            color: var(--ink-soft);
+            font-size: 12.5px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .badge::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .badge.new, .badge.novo, .badge.zero_km {
+            background: var(--green-soft);
+            border-color: #C3DED0;
+            color: var(--green);
+        }
+
+        .badge.used, .badge.usado {
+            background: #FAF2E4;
+            border-color: #EBDCBB;
+            color: var(--amber);
+        }
+
+        .badge.damaged, .badge.batido, .badge.sucata {
+            background: #FBEAE9;
+            border-color: #F0CFCD;
+            color: var(--brake);
+        }
+
+        /* --------------------------------------------------- empty state --- */
+
+        .empty {
+            padding: 56px 24px;
+            text-align: center;
+            color: var(--ink-soft);
+        }
+
+        .empty strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--ink);
+            font-size: 16px;
+        }
+
+        /* ---------------------------------------------------- responsive --- */
+
+        @media (max-width: 640px) {
+            body { padding: 28px 14px 56px; }
+            .page-header { align-items: flex-start; }
+            thead th, tbody td { padding: 12px 14px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">CarsStore</p>
+            <h1>Cars inventory</h1>
+            <span class="count"
+                  th:text="${#lists.size(cars)} + ' vehicles registered'">0 vehicles registered</span>
+        </div>
+
+        <a class="btn btn--primary" th:href="@{/cars/ui/new}">Add car</a>
+    </header>
+
+    <div class="table-card">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                <tr>
+                    <th>Plate id</th>
+                    <th>Car name</th>
+                    <th>Model</th>
+                    <th>Year</th>
+                    <th>Condition</th>
+                    <th class="col-actions">Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="car : ${cars}">
+
+                    <td>
+                        <span class="plate"><span th:text="${car.id}">01</span></span>
+                    </td>
+
+                    <td class="col-name" th:text="${car.carName}">Car name</td>
+                    <td class="col-model" th:text="${car.model}">Model</td>
+                    <td class="num" th:text="${car.year}">2024</td>
+
+                    <td>
+                        <span class="badge"
+                              th:classappend="${#strings.toLowerCase(car.condition)}"
+                              th:text="${car.condition}">Condition</span>
+                    </td>
+
+                    <td class="col-actions">
+                        <span class="actions">
+                            <a class="btn btn--sm btn--quiet"
+                               th:href="@{/cars/ui/list/{id}(id=${car.id})}">Details</a>
+
+                            <a class="btn btn--sm btn--danger"
+                               th:href="@{/cars/ui/edit/{id}(id=${car.id})}">Edit</a>
+
+                            <a class="btn btn--sm btn--danger"
+                               th:href="@{/cars/ui/delete/{id}(id=${car.id})}"
+                               onclick="return confirm('Delete this car? This cannot be undone.');">Delete</a>
+                        </span>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(cars)}">
+                    <td colspan="6" class="empty">
+                        <strong>No cars yet</strong>
+                        Register the first vehicle to see it listed here.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
