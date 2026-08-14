@@ -59,18 +59,10 @@ public class CarService {
                 .orElseThrow(() -> new RuntimeException("The car hasn't been found"));
                 // This part say: "If you have car inside, send me; if not, put this error message
 
-        if (carDTO.getCarName() != null) {
-            cars.setCarName(carDTO.getCarName());
-        }
-        if (carDTO.getModel() != null) {
-            cars.setModel(carDTO.getModel());
-        }
-        if (carDTO.getYear() != null) {
-            cars.setYear(carDTO.getYear());
-        }
-        if (carDTO.getCondition() != null) {
-            cars.setCondition(carDTO.getCondition());
-        }
+        if (carDTO.getCarName() != null) { cars.setCarName(carDTO.getCarName()); }
+        if (carDTO.getModel() != null) { cars.setModel(carDTO.getModel()); }
+        if (carDTO.getYear() != null) { cars.setYear(carDTO.getYear()); }
+        if (carDTO.getCondition() != null) { cars.setCondition(carDTO.getCondition()); }
 
         carRepository.save(cars);
     }
