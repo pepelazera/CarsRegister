@@ -1,4 +1,4 @@
-package carsStore.example.CarsStore;
+package carsStore.example.CarsStore.Controller;
 
 import carsStore.example.CarsStore.DTO.CarDTO;
 import carsStore.example.CarsStore.Enums.Condition;
