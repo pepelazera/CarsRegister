@@ -1,13 +1,11 @@
 package carsStore.example.CarsStore.Controller;
 
 import carsStore.example.CarsStore.DTO.CarDTO;
-import carsStore.example.CarsStore.Model.CarModel;
 import carsStore.example.CarsStore.Service.CarService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/cars")

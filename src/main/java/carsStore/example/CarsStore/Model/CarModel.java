@@ -34,6 +34,7 @@ public class CarModel {
     private Integer year;
 
     @Column(name = "condition")
+    @Enumerated(EnumType.STRING)
     private Condition condition;
 
     public Long getId() {

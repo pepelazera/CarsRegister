@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: carsstore
+    environment:
+      POSTGRES_DB: cars_store
+      POSTGRES_USER: cars
+      POSTGRES_PASSWORD: cars
+    ports:
+      - "5431:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:
