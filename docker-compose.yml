@@ -12,5 +12,18 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: always
 
+  app:
+    build: .
+    container_name: carsstore-app
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cars_store
+      SPRING_DATASOURCE_USERNAME: cars
+      SPRING_DATASOURCE_PASSWORD: cars
+    ports:
+      - "8081:8080"
+    restart: on-failure
+
 volumes:
   pgdata:

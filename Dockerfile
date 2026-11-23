@@ -2,7 +2,7 @@
 # The base of my image
 FROM eclipse-temurin:17
 # Here, I put the responsible to mantain the image
-LABEL maintainer="contato@java10x.dev"
+LABEL maintainer="pepelazera@gmail.com"
 # Work Directory
 WORKDIR /application
 # The "docker-test.jar" is just a copy of all this path
